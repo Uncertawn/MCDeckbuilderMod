@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "mcdeckbuilder",
+  "version": "${version}",
+  "name": "MCDeckBuilder",
+  "description": "Adds a Sammy to your world :)",
+  "authors": [],
+  "contact": {},
+  "license": "unlicense",
+  "icon": "assets/mcdeckbuilder/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "art.uncertawn.mcdeckbuilder.client.McdeckbuilderDataGenerator"
+    ],
+    "client": [
+      "art.uncertawn.mcdeckbuilder.client.McdeckbuilderClient"
+    ],
+    "main": [
+      "art.uncertawn.mcdeckbuilder.Mcdeckbuilder"
+    ]
+  },
+  "mixins": [
+    "mcdeckbuilder.mixins.json",
+    {
+      "config": "mcdeckbuilder.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
