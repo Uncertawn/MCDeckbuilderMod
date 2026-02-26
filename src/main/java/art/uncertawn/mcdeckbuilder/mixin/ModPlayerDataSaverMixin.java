@@ -1,7 +1,6 @@
 package art.uncertawn.mcdeckbuilder.mixin;
 
 import art.uncertawn.mcdeckbuilder.Mcdeckbuilder;
-import art.uncertawn.mcdeckbuilder.util.IEntityDataSaver;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;

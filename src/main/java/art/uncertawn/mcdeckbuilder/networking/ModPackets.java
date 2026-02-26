@@ -3,6 +3,7 @@ package art.uncertawn.mcdeckbuilder.networking;
 
 
 import art.uncertawn.mcdeckbuilder.networking.packets.AddToDeckC2SPacket;
+import art.uncertawn.mcdeckbuilder.networking.packets.DiscardC2SPacket;
 import art.uncertawn.mcdeckbuilder.networking.packets.InitializePlayerDeckC2SPacket;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -10,7 +11,7 @@ import net.minecraft.network.codec.PacketCodec;
 
 import static art.uncertawn.mcdeckbuilder.networking.packets.AddToDeckC2SPacket.ADD_TO_DECK_PAYLOAD_ID;
 import static art.uncertawn.mcdeckbuilder.networking.packets.InitializePlayerDeckC2SPacket.INITIALIZE_DECK_PAYLOAD_ID;
-
+import static art.uncertawn.mcdeckbuilder.networking.packets.DiscardC2SPacket.DISCARD_PAYLOAD_ID;
 
 public class ModPackets {
 
@@ -23,9 +24,13 @@ public class ModPackets {
                 PacketCodec.of((value, buf) -> buf.writeString(value.data()),
                         buf -> new AddToDeckC2SPacket.AddToDeckPayload(buf.readString())));
 
+        PayloadTypeRegistry.playC2S().register(DISCARD_PAYLOAD_ID,
+                PacketCodec.of((value, buf) -> buf.writeString(value.data()),
+                        buf -> new DiscardC2SPacket.DiscardPayload(buf.readString())));
 
         ServerPlayNetworking.registerGlobalReceiver(INITIALIZE_DECK_PAYLOAD_ID, InitializePlayerDeckC2SPacket::receive);
         ServerPlayNetworking.registerGlobalReceiver(ADD_TO_DECK_PAYLOAD_ID, AddToDeckC2SPacket::receive);
+        ServerPlayNetworking.registerGlobalReceiver(DISCARD_PAYLOAD_ID, DiscardC2SPacket::receive);
 
     }
 

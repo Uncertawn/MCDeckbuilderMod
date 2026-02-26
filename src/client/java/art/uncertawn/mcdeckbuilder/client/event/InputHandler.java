@@ -1,7 +1,7 @@
 package art.uncertawn.mcdeckbuilder.client.event;
 
 import art.uncertawn.mcdeckbuilder.Mcdeckbuilder;
-import art.uncertawn.mcdeckbuilder.client.graphics.DeckDisplay;
+import art.uncertawn.mcdeckbuilder.client.graphics.screens.DeckDisplay;
 import art.uncertawn.mcdeckbuilder.data.ModDataManager;
 import art.uncertawn.mcdeckbuilder.networking.packets.InitializePlayerDeckC2SPacket;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -11,7 +11,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.component.Component;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
@@ -29,7 +28,6 @@ public class InputHandler {
                 player.sendMessage(Text.of(String.valueOf(player.hasAttached(ModDataManager.DECK))), false);
                 if (!player.hasAttached(ModDataManager.DECK)) {
                     ClientPlayNetworking.send(new InitializePlayerDeckC2SPacket.InitPlayerDeckPayload(""));
-
                 }
                 player.sendMessage(Text.of(String.valueOf(player.getAttached(ModDataManager.DECK))), false);
                 MinecraftClient.getInstance().setScreen(new DeckDisplay());

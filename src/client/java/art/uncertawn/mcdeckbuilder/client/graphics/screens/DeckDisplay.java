@@ -1,33 +1,31 @@
-package art.uncertawn.mcdeckbuilder.client.graphics;
+package art.uncertawn.mcdeckbuilder.client.graphics.screens;
 
 
 import art.uncertawn.mcdeckbuilder.card.Card;
 import art.uncertawn.mcdeckbuilder.card.CardManager;
+import art.uncertawn.mcdeckbuilder.client.graphics.element.DisplayCard;
 import art.uncertawn.mcdeckbuilder.data.ModDataManager;
 import art.uncertawn.mcdeckbuilder.networking.packets.AddToDeckC2SPacket;
-import com.jcraft.jorbis.Block;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.text.Text;
 
 
 import net.minecraft.client.gui.DrawContext;  // Changed from GuiGraphics
 import net.minecraft.client.gui.widget.ButtonWidget;  // Changed from components.Button
 import net.minecraft.client.toast.SystemToast;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec2f;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class DeckDisplay extends Screen {
+public class DeckDisplay extends ModScreen {
     public DeckDisplay() {
         super(Text.of(""));
     }
 
     List<String> deck;
     List<DisplayCard> cards;
+    DisplayCard selectedCard = null;
 
     @Override
     protected void init() {
@@ -36,7 +34,7 @@ public class DeckDisplay extends Screen {
 
 //        deck = this.client.player.getAttachedOrElse(ModDataManager.DECK, new ArrayList<>());
 //        deck = ModDataManager.getDeck(this.client.player);
-        initCardRender();
+        initScreen();
 
         ButtonWidget buttonWidget = ButtonWidget.builder(Text.of("Hello World"), (btn) -> {
             // When the button is clicked, we can display a toast to the screen.
@@ -56,7 +54,7 @@ public class DeckDisplay extends Screen {
                 }
 
                 // reload the ui?
-                initCardRender();
+                initScreen();
             }
         }).dimensions(40, 140, 120, 20).build();
 
@@ -83,10 +81,11 @@ public class DeckDisplay extends Screen {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        initCardRender();
+        initScreen();
     }
 
-    void initCardRender() {
+    @Override
+    public void initScreen() {
         // get all the cards                        [X]
         // sort cards by card name                  [X]
         // sort cards based on lvl low -> high      [X]
@@ -154,6 +153,29 @@ public class DeckDisplay extends Screen {
                 cards.add(c);
             }
         }
+    }
+
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        super.mouseMoved(mouseX, mouseY);
+        boolean hoveringACard = false;
+        for (DisplayCard card : cards) {
+            if (card.isMouseOver((int)mouseX, (int)mouseY)) {
+                selectedCard = card;
+                hoveringACard = true;
+            }
+        }
+        if (!hoveringACard)
+            selectedCard = null;
+    }
+
+    @Override
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (selectedCard != null) {
+            MinecraftClient.getInstance().setScreen(new CardActionsSubDisplay(this, selectedCard));
+
+        }
+        return super.mouseClicked(click, doubled);
     }
 
     @Override

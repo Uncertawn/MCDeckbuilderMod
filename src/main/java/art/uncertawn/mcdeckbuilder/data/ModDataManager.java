@@ -58,7 +58,7 @@ public class ModDataManager {
             player.modifyAttached(DECK, deck -> {
                 List<String> updatedDeck = new ArrayList<>(deck);
                 updatedDeck.remove(card);
-               return updatedDeck;
+                return updatedDeck;
             });
         }
     }
