@@ -53,7 +53,7 @@ public class ModDataManager {
         });
     }
 
-    public static void removeCardFromDeck(ServerPlayerEntity player, String card) {
+    public static void removeCardFromDeck(PlayerEntity player, String card) {
         if (player.hasAttached(DECK)) {
             player.modifyAttached(DECK, deck -> {
                 List<String> updatedDeck = new ArrayList<>(deck);

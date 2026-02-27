@@ -2,6 +2,7 @@ package art.uncertawn.mcdeckbuilder.client.graphics.screens;
 
 import art.uncertawn.mcdeckbuilder.card.CardManager;
 import art.uncertawn.mcdeckbuilder.client.graphics.element.DisplayCard;
+import art.uncertawn.mcdeckbuilder.data.ModDataManager;
 import art.uncertawn.mcdeckbuilder.networking.packets.DiscardC2SPacket;
 import art.uncertawn.mcdeckbuilder.networking.packets.InitializePlayerDeckC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -39,8 +40,9 @@ public class CardActionsSubDisplay extends Screen {
             String packedCard = CardManager.packCardToString(card.getCard());
             System.out.println(packedCard);
             ClientPlayNetworking.send(new DiscardC2SPacket.DiscardPayload(packedCard));
+            ModDataManager.removeCardFromDeck(this.client.player, packedCard);
             prevScreen.initScreen();
-            MinecraftClient.getInstance().setScreen(null);
+            MinecraftClient.getInstance().setScreen(prevScreen);
         }).dimensions(card.width+card.x+20, card.y, 120, 20).build();
 
         ButtonWidget backButton = ButtonWidget.builder(Text.of("Go back"), (btn) -> {
