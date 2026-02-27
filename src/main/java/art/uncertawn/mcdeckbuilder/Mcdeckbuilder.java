@@ -22,7 +22,8 @@ import static art.uncertawn.mcdeckbuilder.data.ModDataManager.DECK;
 
 /*
 TODO:
-[ ] In DeckDisplay add card interactions
+[X] In DeckDisplay add card interactions
+[ ] Add card levels
 [ ] PvE screen
 [ ] When attacking/getting attacked by an entity initialize PvE screen
 [ ]
@@ -45,6 +46,7 @@ public class Mcdeckbuilder implements ModInitializer {
 
         CardManager.loadCards();
         ModDataManager.register();
+        ModDataManager.testCardLoading();
 
         ServerPlayerEvents.JOIN.register((player) -> {
             if (!player.hasAttached(ModDataManager.DECK)) {
@@ -52,10 +54,10 @@ public class Mcdeckbuilder implements ModInitializer {
             }
         });
 
-        AttackEntityCallback.EVENT.register(((playerEntity, world, hand, entity, entityHitResult) -> {
-
-            return null;
-        }));
+//        AttackEntityCallback.EVENT.register(((playerEntity, world, hand, entity, entityHitResult) -> {
+//
+//            return null;
+//        }));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(CommandManager.literal("addCard")

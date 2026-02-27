@@ -1,6 +1,7 @@
 package art.uncertawn.mcdeckbuilder.data;
 
 import art.uncertawn.mcdeckbuilder.Mcdeckbuilder;
+import art.uncertawn.mcdeckbuilder.card.Card;
 import art.uncertawn.mcdeckbuilder.card.CardManager;
 import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
@@ -12,10 +13,7 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ModDataManager {
 
@@ -65,6 +63,69 @@ public class ModDataManager {
 
     public static List<String> getDeck(PlayerEntity player) {
         return player.getAttachedOrElse(DECK, new ArrayList<>());
+    }
+
+    public static boolean containsSimilar(PlayerEntity player, String card) {
+        return containsSimilar(player, CardManager.loadCardFromString(card));
+    }
+
+    public static boolean isSimilar(Card card1, Card card2) {
+        return card1.getLevel() == card2.getLevel() &&
+                card1.getName().equals(card2.getName()) &&
+                !card1.getUid().equals(card2.getUid());
+    }
+
+    public static boolean containsSimilar(PlayerEntity player, Card card) {
+        boolean flag = false;
+        System.out.println(getDeck(player));
+        for (String card2 : getDeck(player)) {
+            Card loaded = CardManager.loadCardFromString(card2);
+            if (isSimilar(loaded, card)) {
+                flag = true;
+                break;
+            }
+        }
+        return flag;
+    }
+
+    public static Card getSimilar(PlayerEntity player, Card card) {
+        if (containsSimilar(player, card)) {
+            for (String card2 : getDeck(player)) {
+                Card loaded = CardManager.loadCardFromString(card2);
+                if (isSimilar(loaded, card))
+                    return loaded;
+            }
+        }
+        return null;
+    }
+
+
+    public static void testCardLoading() {
+        System.out.println("=== TESTING CARD LOADING ===");
+
+        // Create a test JSON string
+        String testJson = "{\"name\":\"Zombie\",\"lvl\":1,\"uid\":\"324a55a2-c5ca-4794-8b86-e1efde9e6b5e\"}";
+
+        // Load the same card twice
+        Card card1 = CardManager.loadCardFromString(testJson);
+        Card card2 = CardManager.loadCardFromString(testJson);
+
+        System.out.println("Card1: " + card1.getName() + " lvl=" + card1.getLevel() + " uid=" + card1.getUid());
+        System.out.println("Card2: " + card2.getName() + " lvl=" + card2.getLevel() + " uid=" + card2.getUid());
+
+        // Check each condition separately
+        System.out.println("\n=== Checking isSimilar conditions ===");
+        System.out.println("Same level? " + (card1.getLevel() == card2.getLevel()));
+        System.out.println("Same name? " + card1.getName().equals(card2.getName()));
+        System.out.println("Different UID? " + (card1.getUid() != card2.getUid()));
+        System.out.println("UIDs equal? " + card1.getUid().equals(card2.getUid()));
+        System.out.println("isSimilar result: " + isSimilar(card1, card2));
+
+        // Also check if the UIDs are the same object or different objects with same value
+        System.out.println("\n=== UID object comparison ===");
+        System.out.println("card1.uid hash: " + System.identityHashCode(card1.getUid()));
+        System.out.println("card2.uid hash: " + System.identityHashCode(card2.getUid()));
+        System.out.println("Same UUID object? " + (card1.getUid() == card2.getUid()));
     }
 
 }

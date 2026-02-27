@@ -52,8 +52,10 @@ public abstract class Card {
         this.uid = uid;
     }
 
+
     public Identifier getTexture() {
         return texture;
     }
 
+    public void upgrade() {}
 }

@@ -17,6 +17,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;  // Changed from components
 import net.minecraft.client.toast.SystemToast;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class DeckDisplay extends ModScreen {
     public DeckDisplay() {
@@ -104,9 +105,9 @@ public class DeckDisplay extends ModScreen {
             }
         }
         List<Map.Entry<DisplayCard, Integer>> list = new ArrayList<>(cardSorter.entrySet());
-        HashMap<String, Card> existingCards = CardManager.getCards();
+        Map<String, Supplier<? extends Card>> existingCards = CardManager.getCards();
         list.sort(Comparator.comparing(entry ->
-                existingCards.get(entry.getKey().getCard().getName()).getName())
+                existingCards.get(entry.getKey().getCard().getName()).get().getName())
         );
 //        list.sort((e1, e2) -> {
 ////            String n1 = existingCards.get(e1.getKey()).getName();

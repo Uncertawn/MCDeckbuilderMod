@@ -7,21 +7,23 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class CardManager {
 
-    static HashMap<String, Card> cards = new HashMap<>();
+    static Map<String, Supplier<? extends Card>> cards = new HashMap<>();
 
     public static int maxCardsInDeck = 21;
 
     public static void loadCards() {
-        cards.put("Creeper", new CreeperCard());
-        cards.put("Cow", new CowCard());
-        cards.put("Zombie", new ZombieCard());
+        cards.put("Creeper", CreeperCard::new);
+        cards.put("Cow", CowCard::new);
+        cards.put("Zombie", ZombieCard::new);
     }
 
-    public static HashMap<String, Card> getCards() {
+    public static Map<String, Supplier<? extends Card>> getCards() {
         return cards;
     }
 
@@ -44,10 +46,11 @@ public class CardManager {
     public static Card loadCardFromString(String card) {
         JsonObject c = JsonParser.parseString(card).getAsJsonObject();
         // "{\"name\":\"Creeper\",\"lvl\":1,\"uid\":\""+ UUID.randomUUID() +"\"}",
+        String name = c.get("name").getAsString();
         int level = c.get("lvl").getAsInt();
         UUID uid = UUID.fromString(c.get("uid").getAsString());
 
-        Card resultCard = getCards().get(c.get("name").getAsString());
+        Card resultCard = getCards().get(name).get();
         resultCard.setLevel(level);
         resultCard.setUid(uid);
         return resultCard;
@@ -67,8 +70,7 @@ public class CardManager {
                 .append("\"name\":\""+card.getName()).append("\"").append(",")
                 .append("\"lvl\":"+card.getLevel()).append(",")
                 .append("\"uid\":\""+card.getUid()).append("\"")
-//                .append("\"name:\""+card.getName())
-//                .append("\"name:\""+card.getName())
+//                .append("\"name\":\""+card.getName()).append("\"").append(",")
                 .append("}")
                 .toString();
         return result;
