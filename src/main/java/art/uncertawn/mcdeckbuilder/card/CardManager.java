@@ -3,12 +3,12 @@ package art.uncertawn.mcdeckbuilder.card;
 import art.uncertawn.mcdeckbuilder.card.cards.CowCard;
 import art.uncertawn.mcdeckbuilder.card.cards.CreeperCard;
 import art.uncertawn.mcdeckbuilder.card.cards.ZombieCard;
+import art.uncertawn.mcdeckbuilder.data.ModDataManager;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.entity.player.PlayerEntity;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class CardManager {
@@ -74,5 +74,39 @@ public class CardManager {
                 .append("}")
                 .toString();
         return result;
+    }
+
+    public static Card upgradeCard(String card1) {
+        Card c1 = CardManager.loadCardFromString(card1);
+        return upgradeCard(c1);
+    }
+
+    public static Card upgradeCard(Card card1) {
+        Card c = getCards().get(card1.getName()).get();
+        c.setLevel(card1.getLevel() + 1);
+        c.setUid(UUID.randomUUID());
+        return c;
+    }
+
+    public static Card upgradeCardOnPlayer(PlayerEntity player, String card1, String card2) {
+        Card c1 = CardManager.loadCardFromString(card1);
+        Card c2 = CardManager.loadCardFromString(card2);
+        return upgradeCardOnPlayer(player, c1, c2);
+    }
+
+    public static Card upgradeCardOnPlayer(PlayerEntity player, Card card1, Card card2) {
+        if (player.hasAttached(ModDataManager.DECK)) {
+            Card c = upgradeCard(card1);
+            player.modifyAttached(ModDataManager.DECK, deck -> {
+                List<String> d = new ArrayList<>(deck);
+                System.out.println(card1.getUid() + " | " + card2.getUid());
+                d.remove(CardManager.packCardToString(card1));
+                d.remove(CardManager.packCardToString(card2));
+                d.add(CardManager.packCardToString(c));
+                return d;
+            });
+            return c;
+        }
+        return null;
     }
 }

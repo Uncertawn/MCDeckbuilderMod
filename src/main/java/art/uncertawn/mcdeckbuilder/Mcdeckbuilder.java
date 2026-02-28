@@ -46,7 +46,6 @@ public class Mcdeckbuilder implements ModInitializer {
 
         CardManager.loadCards();
         ModDataManager.register();
-        ModDataManager.testCardLoading();
 
         ServerPlayerEvents.JOIN.register((player) -> {
             if (!player.hasAttached(ModDataManager.DECK)) {

@@ -3,17 +3,21 @@ package art.uncertawn.mcdeckbuilder.data;
 import art.uncertawn.mcdeckbuilder.Mcdeckbuilder;
 import art.uncertawn.mcdeckbuilder.card.Card;
 import art.uncertawn.mcdeckbuilder.card.CardManager;
+import art.uncertawn.mcdeckbuilder.networking.packets.UpgradeCardC2SPacket;
 import com.mojang.serialization.Codec;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class ModDataManager {
 
@@ -98,34 +102,4 @@ public class ModDataManager {
         }
         return null;
     }
-
-
-    public static void testCardLoading() {
-        System.out.println("=== TESTING CARD LOADING ===");
-
-        // Create a test JSON string
-        String testJson = "{\"name\":\"Zombie\",\"lvl\":1,\"uid\":\"324a55a2-c5ca-4794-8b86-e1efde9e6b5e\"}";
-
-        // Load the same card twice
-        Card card1 = CardManager.loadCardFromString(testJson);
-        Card card2 = CardManager.loadCardFromString(testJson);
-
-        System.out.println("Card1: " + card1.getName() + " lvl=" + card1.getLevel() + " uid=" + card1.getUid());
-        System.out.println("Card2: " + card2.getName() + " lvl=" + card2.getLevel() + " uid=" + card2.getUid());
-
-        // Check each condition separately
-        System.out.println("\n=== Checking isSimilar conditions ===");
-        System.out.println("Same level? " + (card1.getLevel() == card2.getLevel()));
-        System.out.println("Same name? " + card1.getName().equals(card2.getName()));
-        System.out.println("Different UID? " + (card1.getUid() != card2.getUid()));
-        System.out.println("UIDs equal? " + card1.getUid().equals(card2.getUid()));
-        System.out.println("isSimilar result: " + isSimilar(card1, card2));
-
-        // Also check if the UIDs are the same object or different objects with same value
-        System.out.println("\n=== UID object comparison ===");
-        System.out.println("card1.uid hash: " + System.identityHashCode(card1.getUid()));
-        System.out.println("card2.uid hash: " + System.identityHashCode(card2.getUid()));
-        System.out.println("Same UUID object? " + (card1.getUid() == card2.getUid()));
-    }
-
 }

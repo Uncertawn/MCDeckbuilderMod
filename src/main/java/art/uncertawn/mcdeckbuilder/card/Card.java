@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.util.Identifier;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public abstract class Card {
     private final String name;
@@ -57,5 +58,4 @@ public abstract class Card {
         return texture;
     }
 
-    public void upgrade() {}
 }

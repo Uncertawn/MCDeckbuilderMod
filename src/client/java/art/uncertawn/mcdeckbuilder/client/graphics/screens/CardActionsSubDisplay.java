@@ -6,6 +6,7 @@ import art.uncertawn.mcdeckbuilder.client.graphics.element.DisplayCard;
 import art.uncertawn.mcdeckbuilder.data.ModDataManager;
 import art.uncertawn.mcdeckbuilder.networking.packets.DiscardC2SPacket;
 import art.uncertawn.mcdeckbuilder.networking.packets.InitializePlayerDeckC2SPacket;
+import art.uncertawn.mcdeckbuilder.networking.packets.UpgradeCardC2SPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -49,9 +50,13 @@ public class CardActionsSubDisplay extends Screen {
         /// IMPLEMENT AFTER ADDING MORE CARD LEVELS BESIDES THE CURRENT ONE
         ButtonWidget upgradeCardButton = ButtonWidget.builder(Text.of("Upgrade"), (btn) -> {
             Card card1 = ModDataManager.getSimilar(this.client.player, card.getCard());
+            String c1 = CardManager.packCardToString(card1);
+            String c2 = CardManager.packCardToString(card.getCard());
+            ClientPlayNetworking.send(new UpgradeCardC2SPacket.UpgradeCardPayload(c1, c2));
 
+            CardManager.upgradeCardOnPlayer(this.client.player, card1, card.getCard());
 
-            MinecraftClient.getInstance().setScreen(prevScreen);
+            MinecraftClient.getInstance().setScreen(null);
         }).dimensions(card.width+card.x+20, card.y+(card.height/2)-10, 120, 20).build();
         upgradeCardButton.active = ModDataManager.containsSimilar(this.client.player, card.getCard());
         ///
