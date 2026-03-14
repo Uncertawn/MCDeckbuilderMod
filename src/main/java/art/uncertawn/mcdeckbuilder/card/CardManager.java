@@ -15,8 +15,6 @@ public class CardManager {
 
     static Map<String, Supplier<? extends Card>> cards = new HashMap<>();
 
-    public static int maxCardsInDeck = 21;
-
     public static void loadCards() {
         cards.put("Creeper", CreeperCard::new);
         cards.put("Cow", CowCard::new);

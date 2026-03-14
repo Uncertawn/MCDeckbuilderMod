@@ -47,7 +47,6 @@ public class CardActionsSubDisplay extends Screen {
             MinecraftClient.getInstance().setScreen(prevScreen);
         }).dimensions(card.width+card.x+20, card.y, 120, 20).build();
 
-        /// IMPLEMENT AFTER ADDING MORE CARD LEVELS BESIDES THE CURRENT ONE
         ButtonWidget upgradeCardButton = ButtonWidget.builder(Text.of("Upgrade"), (btn) -> {
             Card card1 = ModDataManager.getSimilar(this.client.player, card.getCard());
             String c1 = CardManager.packCardToString(card1);
@@ -56,6 +55,7 @@ public class CardActionsSubDisplay extends Screen {
 
             CardManager.upgradeCardOnPlayer(this.client.player, card1, card.getCard());
 
+//            prevScreen.initScreen();
             MinecraftClient.getInstance().setScreen(null);
         }).dimensions(card.width+card.x+20, card.y+(card.height/2)-10, 120, 20).build();
         upgradeCardButton.active = ModDataManager.containsSimilar(this.client.player, card.getCard());

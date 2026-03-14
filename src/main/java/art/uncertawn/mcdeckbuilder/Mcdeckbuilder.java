@@ -5,20 +5,13 @@ import art.uncertawn.mcdeckbuilder.data.ModDataManager;
 import art.uncertawn.mcdeckbuilder.networking.ModPackets;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static art.uncertawn.mcdeckbuilder.data.ModDataManager.DECK;
 
 /*
 TODO:
@@ -49,7 +42,7 @@ public class Mcdeckbuilder implements ModInitializer {
 
         ServerPlayerEvents.JOIN.register((player) -> {
             if (!player.hasAttached(ModDataManager.DECK)) {
-                ModDataManager.initializePlayer(player);
+                ModDataManager.initializeEntity(player);
             }
         });
 

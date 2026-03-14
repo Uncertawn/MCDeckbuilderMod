@@ -8,9 +8,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class InitializePlayerDeckC2SPacket {
     public static final CustomPayload.Id<InitPlayerDeckPayload> INITIALIZE_DECK_PAYLOAD_ID =
             new CustomPayload.Id<>(Identifier.of(Mcdeckbuilder.MODID, "init_player_deck"));
@@ -28,7 +25,7 @@ public class InitializePlayerDeckC2SPacket {
 
         server.execute(() -> {
             if (!player.hasAttached(ModDataManager.DECK)) {
-                ModDataManager.initializePlayer(player);
+                ModDataManager.initializeEntity(player);
             }
         });
     }

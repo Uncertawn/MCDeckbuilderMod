@@ -3,28 +3,26 @@ package art.uncertawn.mcdeckbuilder.data;
 import art.uncertawn.mcdeckbuilder.Mcdeckbuilder;
 import art.uncertawn.mcdeckbuilder.card.Card;
 import art.uncertawn.mcdeckbuilder.card.CardManager;
-import art.uncertawn.mcdeckbuilder.networking.packets.UpgradeCardC2SPacket;
 import com.mojang.serialization.Codec;
-import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 public class ModDataManager {
 
-    public static final List<String> STARTER_DECK = Arrays.asList(
-            "{\"name\":\"Creeper\",\"lvl\":1,\"uid\":\""+ UUID.randomUUID() +"\"}",
-            "{\"name\":\"Cow\",\"lvl\":1,\"uid\":\""+ UUID.randomUUID() +"\"}"
-    );
+    public static List<String> getStarterDeck() {
+        return Arrays.asList(
+                "{\"name\":\"Creeper\",\"lvl\":1,\"uid\":\"" + UUID.randomUUID() + "\"}",
+                "{\"name\":\"Cow\",\"lvl\":1,\"uid\":\"" + UUID.randomUUID() + "\"}"
+        );
+    }
+
 
     public static final AttachmentType<List<String>> DECK = AttachmentRegistry.create(
             Identifier.of(Mcdeckbuilder.MODID, "deck"),
@@ -38,17 +36,32 @@ public class ModDataManager {
                     .copyOnDeath()
     );
 
+    public static final AttachmentType<List<String>> PLANNED_CARDS = AttachmentRegistry.create(
+            Identifier.of(Mcdeckbuilder.MODID, "planned_cards"),
+            builder -> builder
+                    .initializer(ArrayList::new)  // Default empty list
+                    .persistent(Codec.STRING.listOf())  // List codec
+                    .syncWith(
+                            PacketCodecs.registryCodec(Codec.STRING.listOf()),
+                            AttachmentSyncPredicate.targetOnly()
+                    )
+                    .copyOnDeath()
+    );
+
     public static void register() {}
 
-    public static void initializePlayer(AttachmentTarget player) {
-        if (!player.hasAttached(ModDataManager.DECK)) {
-            player.setAttached(DECK, STARTER_DECK);
+    public static void initializeEntity(AttachmentTarget entity) {
+        if (!entity.hasAttached(ModDataManager.DECK)) {
+            entity.setAttached(DECK, getStarterDeck());
+        }
+        if (!entity.hasAttached(ModDataManager.PLANNED_CARDS)) {
+            entity.setAttached(PLANNED_CARDS, new ArrayList<>());
         }
     }
 
     public static void addCardsToDeck(PlayerEntity player, List<String> newCards) {
         player.modifyAttached(DECK, existingDeck -> {
-            if (existingDeck.size()+1 > CardManager.maxCardsInDeck) return existingDeck;
+            if (existingDeck.size()+1 > Variables.MAX_CARDS_IN_DECK) return existingDeck;
             List<String> updatedDeck = new ArrayList<>(existingDeck);
             updatedDeck.addAll(newCards);
             return updatedDeck;
@@ -101,5 +114,21 @@ public class ModDataManager {
             }
         }
         return null;
+    }
+
+    public static void planCardsToPlay(Card[] cards, AttachmentTarget entity) {
+        String[] queue = new String[Variables.MAX_CARD_NUMBER_TO_PLAY];
+        for (int i = 0; i < cards.length; i++) {
+            queue[i] = CardManager.packCardToString(cards[i]);
+        }
+        planCardsToPlay(queue, entity);
+    }
+
+    public static void planCardsToPlay(String[] cards, AttachmentTarget entity) {
+        entity.modifyAttached(PLANNED_CARDS, queue -> {
+            ArrayList<String> queueCopy = new ArrayList<>(queue);
+            queueCopy.addAll(Arrays.stream(cards).toList());
+            return queueCopy;
+        });
     }
 }
